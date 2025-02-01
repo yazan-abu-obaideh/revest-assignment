@@ -55,7 +55,6 @@ function parseFormElement(elementData: {
                 onChange={() => {
                   const selected = index.toString();
                   setSelected(selected);
-                  console.log("selected: " + selected);
                 }}
                 className="form-check-input"
                 type="radio"

@@ -7,9 +7,8 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import { register } from "module";
 import { useState } from "react";
-import { useForm, UseFormRegister } from "react-hook-form";
+import { FieldValues, useForm, UseFormRegister } from "react-hook-form";
 
 type ElementData = {
   id: number;
@@ -24,7 +23,7 @@ type ElementData = {
 
 function parseFormElement(
   elementData: ElementData,
-  register: UseFormRegister<any>
+  register: UseFormRegister<FieldValues>
 ) {
   switch (elementData.fieldType) {
     case "TEXT":
@@ -40,10 +39,9 @@ function parseFormElement(
 
 const ListFormElement: React.FC<{
   elementData: ElementData;
-  register: UseFormRegister<any>;
+  register: UseFormRegister<FieldValues>;
 }> = (props) => {
   const options = props.elementData.listOfValues1 || [];
-  const dataListName = props.elementData.name;
 
   const fallBack = <> No options provided for list element </>;
 
@@ -57,7 +55,11 @@ const ListFormElement: React.FC<{
         name={props.elementData.name}
       >
         {options.map((option) => {
-          return <MenuItem value={option}> {option} </MenuItem>;
+          return (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          );
         })}
       </Select>
     </>
@@ -66,7 +68,7 @@ const ListFormElement: React.FC<{
 
 const RadioFormElement: React.FC<{
   elementData: ElementData;
-  register: UseFormRegister<any>;
+  register: UseFormRegister<FieldValues>;
 }> = (props) => {
   const [selected, setSelected] = useState(props.elementData.defaultValue);
   const radioOptions = props.elementData.listOfValues1 ?? [];
@@ -103,7 +105,7 @@ const RadioFormElement: React.FC<{
 
 const TextFormElement: React.FC<{
   elementData: ElementData;
-  register: UseFormRegister<any>;
+  register: UseFormRegister<FieldValues>;
 }> = (props) => {
   return (
     <>

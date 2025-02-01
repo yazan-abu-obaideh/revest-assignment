@@ -1,0 +1,29 @@
+name: Build
+
+on:
+  push:
+    branches: ["*"]
+
+jobs:
+  build-dynamic-forms:
+    runs-on: ubuntu-latest
+    defaults:
+      runs:
+        working-directory: dynamic-forms
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "18"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the application
+        run: npm run build
+
+      - name: Run EsLint
+        run: npm run lint

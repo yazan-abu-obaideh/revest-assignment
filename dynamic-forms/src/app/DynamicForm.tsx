@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { ASSIGNMENT_SAMPLE_DATA } from "./sample_data";
 
@@ -28,7 +29,7 @@ function parseFormElement(elementData: {
           <label htmlFor={dataListName}>{dataListName}</label>
           <datalist id={dataListName}>
             {options.map((option) => (
-              <option value={option} />
+              <option key={option} value={option} />
             ))}
           </datalist>
         </>
@@ -49,24 +50,24 @@ function parseFormElement(elementData: {
         </label>
         {radioOptions.map((option, index) => {
           return (
-            <>
-              <div className="form-check">
-                <input
-                  onClick={() => {
-                    setSelected(index.toString());
-                  }}
-                  className="form-check-input"
-                  type="radio"
-                  name={option}
-                  id={option}
-                  value={index}
-                  checked={index.toString() === selected}
-                />
-                <label className="form-check-label" htmlFor="customRadio1">
-                  {option}
-                </label>
-              </div>
-            </>
+            <div key={option} className="form-check">
+              <input
+                onChange={() => {
+                  const selected = index.toString();
+                  setSelected(selected);
+                  console.log("selected: " + selected);
+                }}
+                className="form-check-input"
+                type="radio"
+                name={option}
+                id={option}
+                value={index}
+                checked={index.toString() === selected}
+              />
+              <label className="form-check-label" htmlFor="customRadio1">
+                {option}
+              </label>
+            </div>
           );
         })}
       </>

@@ -8,7 +8,7 @@ jobs:
   build-dynamic-forms:
     runs-on: ubuntu-latest
     defaults:
-      runs:
+      run:
         working-directory: dynamic-forms
     steps:
       - name: Checkout code

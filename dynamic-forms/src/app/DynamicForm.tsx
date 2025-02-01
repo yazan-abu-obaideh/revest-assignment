@@ -1,4 +1,12 @@
 "use client";
+import {
+  Button,
+  Container,
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
+} from "@mui/material";
 import { register } from "module";
 import { useState } from "react";
 import { useForm, UseFormRegister } from "react-hook-form";
@@ -36,20 +44,22 @@ const ListFormElement: React.FC<{
 }> = (props) => {
   const options = props.elementData.listOfValues1 || [];
   const dataListName = props.elementData.name;
-  return (
+
+  const fallBack = <> No options provided for list element </>;
+
+  return options.length === 0 ? (
+    fallBack
+  ) : (
     <>
-      <input
-        className="form-control"
-        required={props.elementData.required}
-        list={dataListName}
-        name={dataListName}
-      ></input>
-      <label htmlFor={dataListName}>{dataListName}</label>
-      <datalist id={dataListName}>
-        {options.map((option) => (
-          <option key={option} value={option} />
-        ))}
-      </datalist>
+      <Select
+        {...props.register(props.elementData.name)}
+        label={props.elementData.name}
+        name={props.elementData.name}
+      >
+        {options.map((option) => {
+          return <MenuItem value={option}> {option} </MenuItem>;
+        })}
+      </Select>
     </>
   );
 };
@@ -97,15 +107,15 @@ const TextFormElement: React.FC<{
 }> = (props) => {
   return (
     <>
-      <input
+      <TextField
         {...props.register(props.elementData.name)}
+        label={props.elementData.name}
         className="form-control"
         required={props.elementData.required}
         name={props.elementData.name}
         defaultValue={props.elementData.defaultValue}
         type="text"
-      ></input>
-      <label htmlFor={props.elementData.name}> {props.elementData.name} </label>
+      />
     </>
   );
 };
@@ -115,20 +125,23 @@ export const DynamicForm: React.FC<{ formDesc: string }> = (props) => {
   const parsed: { data: ElementData[] } = JSON.parse(props.formDesc);
 
   return (
-    <div className="container d-flex justify-content-center m-5">
+    <Container>
       <form
         onSubmit={handleSubmit((data) => {
           console.log(data);
         })}
-        className="w-50"
       >
-        {parsed.data.map((elementData) => (
-          <div className="row mb-3" key={elementData.id}>
-            {parseFormElement(elementData, register)}
-          </div>
-        ))}
-        <button type="submit">Submit</button>
+        <Stack spacing={2} width={400}>
+          {parsed.data.map((elementData) => (
+            <div key={elementData.id}>
+              {parseFormElement(elementData, register)}
+            </div>
+          ))}
+          <Button type="submit" variant="contained" color="primary">
+            Submit
+          </Button>
+        </Stack>
       </form>
-    </div>
+    </Container>
   );
 };

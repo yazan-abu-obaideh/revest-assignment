@@ -1,7 +1,7 @@
 "use client";
 import {
+  Box,
   Button,
-  Container,
   FormControl,
   FormControlLabel,
   FormLabel,
@@ -76,22 +76,28 @@ const ListFormElement: React.FC<{
   return options.length === 0 ? (
     fallBack
   ) : (
-    <Select
-      {...props.register(props.elementData.name)}
-      label={props.elementData.name}
-      name={props.elementData.name}
-      defaultValue={
-        options[Number.parseInt(props.elementData.defaultValue) - 1]
-      }
-    >
-      {options.map((option) => {
-        return (
-          <MenuItem key={option} value={option}>
-            {option}
-          </MenuItem>
-        );
-      })}
-    </Select>
+    <>
+      <FormLabel style={{ marginRight: "5%" }}>
+        {props.elementData.name}
+      </FormLabel>
+      <Select
+        {...props.register(props.elementData.name, {
+          required: props.elementData.required,
+        })}
+        name={props.elementData.name}
+        defaultValue={
+          options[Number.parseInt(props.elementData.defaultValue) - 1]
+        }
+      >
+        {["None", ...options].map((option, index) => {
+          return (
+            <MenuItem key={index} value={option}>
+              {option}
+            </MenuItem>
+          );
+        })}
+      </Select>
+    </>
   );
 };
 
@@ -158,6 +164,11 @@ const TextFormElement: React.FC<{
       defaultValue={data.defaultValue}
       error={props.errors[name] !== undefined}
       helperText={props.errors[name]?.message?.toString()}
+      sx={
+        {
+          width: "100%"
+        }
+      }
       type="text"
     />
   );
@@ -172,13 +183,20 @@ export const DynamicForm: React.FC<{ formDesc: string }> = (props) => {
   const parsed: { data: ElementData[] } = JSON.parse(props.formDesc);
 
   return (
-    <Container>
+    <Box sx={
+      {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "20%"
+      }
+    }>
       <form
         onSubmit={handleSubmit((data) => {
           console.log(data);
         })}
       >
-        <Stack spacing={2} width={400}>
+        <Stack width="100%" spacing={2}>
           {parsed.data.map((elementData) => (
             <div key={elementData.id}>
               {parseFormElement(elementData, register, errors)}
@@ -189,6 +207,6 @@ export const DynamicForm: React.FC<{ formDesc: string }> = (props) => {
           </Button>
         </Stack>
       </form>
-    </Container>
+    </Box>
   );
 };

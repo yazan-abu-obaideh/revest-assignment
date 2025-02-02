@@ -1,42 +1,89 @@
 "use client";
 import { useState } from "react";
 import { DynamicForm } from "./DynamicForm";
-import styles from "./page.module.css";
 import { ASSIGNMENT_SAMPLE_DATA } from "./sample_data";
+import {
+  AppBar,
+  Box,
+  Button,
+  Snackbar,
+  Stack,
+  TextField,
+  Toolbar,
+  Typography,
+} from "@mui/material";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
 const INITIAL_INPUT = JSON.stringify(ASSIGNMENT_SAMPLE_DATA);
+const USER_ID = "USER_ID";
 
-const FormManipulator: React.FC<{
-  setFormDesc: (formDesc: string) => void;
-}> = (props) => {
-  const [value, setValue] = useState(INITIAL_INPUT);
+const USER_MAP = new Map<string, string[]>();
 
+type SimpleLoginFieldValues = {
+  UserId: string;
+};
+
+const Header = () => {
   return (
-    <>
-      <input
-        style={{
-          width: "50vw",
-          height: "25vh",
-        }}
-        type="text"
-        value={value}
-        onChange={(event) => {
-          event.stopPropagation();
-          console.log("Changed the value!");
-          setValue(event.currentTarget.value);
-          props.setFormDesc(event.currentTarget.value);
-        }}
-      ></input>
-    </>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        width: "100%",
+      }}
+    >
+      <AppBar color="secondary" position="static" sx={{ width: "80%" }}>
+        <Toolbar>
+          <Typography variant="h6" style={{ flexGrow: 1 }}>
+            Revest Dynamic Forms
+          </Typography>
+          <Button color="inherit">Logout</Button>
+        </Toolbar>
+      </AppBar>
+    </Box>
+  );
+};
+
+const SimpleLogin: React.FC<{ setUserId: (userId: string) => void }> = (
+  props
+) => {
+  const { handleSubmit, register } = useForm<SimpleLoginFieldValues>();
+
+  const onSubmit: SubmitHandler<SimpleLoginFieldValues> = (data) => {
+    props.setUserId(data.UserId);
+  };
+  return (
+    <Box
+      height="30vh"
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+    >
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Stack spacing={1}>
+          <TextField {...register("UserId")} label={"User ID"} />
+          <Button type="submit">Login</Button>
+        </Stack>
+      </form>
+    </Box>
   );
 };
 
 export default function Home() {
   const [formDesc, setFormDesc] = useState(INITIAL_INPUT);
+  const [userId, setUserId] = useState<string | undefined>(undefined);
   return (
-    <div className={styles.page}>
-      <DynamicForm formDesc={formDesc} />
-      <FormManipulator setFormDesc={setFormDesc} />
+    <div>
+      <Header />
+      {!userId && <SimpleLogin setUserId={setUserId} />}
+      {userId && (
+        <Stack width="100%" padding="1%" alignItems="center" justifyContent="center">
+            <span
+              style={{ opacity: "0.5", padding: "1.5%" }}
+            >{`Logged in as: ${userId}`}</span>
+          <DynamicForm formDesc={formDesc} />
+        </Stack>
+      )}
     </div>
   );
 }

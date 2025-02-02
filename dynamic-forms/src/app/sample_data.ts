@@ -1,4 +1,7 @@
-export const ASSIGNMENT_SAMPLE_DATA = {
+import { FormDescription } from "./FormData";
+
+export const ASSIGNMENT_SAMPLE_DATA: FormDescription = {
+  formLabel: "Assignment sample data",
   data: [
     {
       id: 1,

@@ -1,27 +1,31 @@
 "use client";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DynamicForm } from "./DynamicForm";
 import { ASSIGNMENT_SAMPLE_DATA } from "./sample_data";
 import {
   AppBar,
   Box,
   Button,
+  MenuItem,
+  Select,
   Stack,
   TextField,
   Toolbar,
   Typography,
 } from "@mui/material";
 import { SubmitHandler, useForm } from "react-hook-form";
-
-const INITIAL_INPUT = JSON.stringify(ASSIGNMENT_SAMPLE_DATA);
-
-// const USER_MAP = new Map<string, string[]>();
+import NewFormInput from "./NewFormInput";
+import { INSTANCE } from "./LocalUserDataStore";
+import { FormDescription } from "./FormData";
 
 type SimpleLoginFieldValues = {
   UserId: string;
 };
 
-const Header = () => {
+const Header: React.FC<{
+  showLogout: boolean;
+  doLogout: () => void;
+}> = (props) => {
   return (
     <Box
       sx={{
@@ -30,12 +34,16 @@ const Header = () => {
         width: "100%",
       }}
     >
-      <AppBar color="secondary" position="static" sx={{ width: "80%" }}>
+      <AppBar color="secondary" position="static" sx={{ width: "100%" }}>
         <Toolbar>
           <Typography variant="h6" style={{ flexGrow: 1 }}>
             Revest Dynamic Forms
           </Typography>
-          <Button color="inherit">Logout</Button>
+          {props.showLogout && (
+            <Button onClick={props.doLogout} color="inherit">
+              Logout
+            </Button>
+          )}
         </Toolbar>
       </AppBar>
     </Box>
@@ -48,6 +56,9 @@ const SimpleLogin: React.FC<{ setUserId: (userId: string) => void }> = (
   const { handleSubmit, register } = useForm<SimpleLoginFieldValues>();
 
   const onSubmit: SubmitHandler<SimpleLoginFieldValues> = (data) => {
+    if (!INSTANCE.hasUser(data.UserId)) {
+      INSTANCE.createUser(data.UserId);
+    }
     props.setUserId(data.UserId);
   };
   return (
@@ -67,20 +78,77 @@ const SimpleLogin: React.FC<{ setUserId: (userId: string) => void }> = (
   );
 };
 
+function SubtleSeparator() {
+  return <hr style={{ width: "80%", height: "10%", opacity: "0.1" }}></hr>;
+}
+
 export default function Home() {
-  const [formDesc] = useState(INITIAL_INPUT);
+  const [formDesc, setFormDesc] = useState(ASSIGNMENT_SAMPLE_DATA);
   const [userId, setUserId] = useState<string | undefined>(undefined);
+  const [userData, setUserData] = useState<FormDescription[]>([
+    ASSIGNMENT_SAMPLE_DATA,
+  ]);
+  const [showAddForm, setShowAddForm] = useState(true);
+
+  useEffect(() => {
+    setUserData(INSTANCE.fetchUserData(userId ?? ""));
+  }, [userId]);
+
   return (
     <div>
-      <Header />
+      <Header
+        showLogout={userId !== undefined}
+        doLogout={() => setUserId(undefined)}
+      />
       {!userId && <SimpleLogin setUserId={setUserId} />}
-      {userId && (
-        <Stack width="100%" padding="1%" alignItems="center" justifyContent="center">
+      {userId && userData.length > 0 && (
+        <>
+          <Stack
+            width="100%"
+            padding="0.5%"
+            alignItems="center"
+            justifyContent="center"
+          >
             <span
-              style={{ opacity: "0.5", padding: "1.5%" }}
+              style={{ opacity: "0.5", margin: "0.5%" }}
             >{`Logged in as: ${userId}`}</span>
-          <DynamicForm formDesc={formDesc} />
-        </Stack>
+            <div style={{ padding: "0.5%" }}>Selected Form</div>
+            <Select name={"Select form"} defaultValue={0}>
+              {[ASSIGNMENT_SAMPLE_DATA, ...userData].map((option, index) => {
+                return (
+                  <MenuItem
+                    onClick={() => setFormDesc(option)}
+                    key={index}
+                    value={index}
+                  >
+                    {option.formLabel}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </Stack>
+        </>
+      )}
+
+      {userId && (
+        <>
+          <SubtleSeparator />
+          <Stack
+            width="100%"
+            padding="0.5%"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <DynamicForm formDesc={formDesc} />
+          </Stack>
+          <SubtleSeparator />
+        </>
+      )}
+
+      {userId && showAddForm && (
+        <Box>
+          <NewFormInput userId={userId} setUserData={setUserData} />
+        </Box>
       )}
     </div>
   );

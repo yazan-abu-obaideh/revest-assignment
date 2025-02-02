@@ -18,17 +18,7 @@ import {
   useForm,
   UseFormRegister,
 } from "react-hook-form";
-
-type ElementData = {
-  id: number;
-  name: string;
-  fieldType: string;
-  defaultValue: string;
-  required: boolean;
-  listOfValues1?: string[];
-  minLength?: number;
-  maxLength?: number;
-};
+import { ElementData, FormDescription } from "./FormData";
 
 function parseFormElement(
   elementData: ElementData,
@@ -174,13 +164,12 @@ const TextFormElement: React.FC<{
   );
 };
 
-export const DynamicForm: React.FC<{ formDesc: string }> = (props) => {
+export const DynamicForm: React.FC<{ formDesc: FormDescription }> = (props) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const parsed: { data: ElementData[] } = JSON.parse(props.formDesc);
 
   return (
     <Box sx={
@@ -197,7 +186,7 @@ export const DynamicForm: React.FC<{ formDesc: string }> = (props) => {
         })}
       >
         <Stack width="100%" spacing={2}>
-          {parsed.data.map((elementData) => (
+          {props.formDesc.data.map((elementData) => (
             <div key={elementData.id}>
               {parseFormElement(elementData, register, errors)}
             </div>

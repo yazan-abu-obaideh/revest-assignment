@@ -6,6 +6,7 @@ import {
   AppBar,
   Box,
   Button,
+  FormLabel,
   MenuItem,
   Select,
   Stack,
@@ -94,6 +95,8 @@ export default function Home() {
     setUserData(INSTANCE.fetchUserData(userId ?? ""));
   }, [userId]);
 
+  const withSample = [ASSIGNMENT_SAMPLE_DATA, ...userData];
+
   return (
     <div>
       <Header
@@ -101,7 +104,7 @@ export default function Home() {
         doLogout={() => setUserId(undefined)}
       />
       {!userId && <SimpleLogin setUserId={setUserId} />}
-      {userId && userData.length > 0 && (
+      {userId && (
         <>
           <Stack
             width="100%"
@@ -112,9 +115,9 @@ export default function Home() {
             <span
               style={{ opacity: "0.5", margin: "0.5%" }}
             >{`Logged in as: ${userId}`}</span>
-            <div style={{ padding: "0.5%" }}>Selected Form</div>
+            <FormLabel style={{ padding: "0.5%" }}>Selected Form</FormLabel>
             <Select name={"Select form"} defaultValue={0}>
-              {[ASSIGNMENT_SAMPLE_DATA, ...userData].map((option, index) => {
+              {withSample.map((option, index) => {
                 return (
                   <MenuItem
                     onClick={() => setFormDesc(option)}
@@ -146,7 +149,7 @@ export default function Home() {
       )}
 
       {userId && showAddForm && (
-        <Box>
+        <Box marginTop="1%">
           <NewFormInput userId={userId} setUserData={setUserData} />
         </Box>
       )}

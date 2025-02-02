@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { TextField, Button, Container } from "@mui/material";
 import { INSTANCE } from "./LocalUserDataStore";
@@ -17,7 +17,10 @@ const NewFormInput: React.FC<{
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<FormFields>();
+
+  const [lastSubmitted, setLastSubmitted] = useState<string | undefined>(undefined);
 
   const onSubmit = (data: FormFields) => {
     INSTANCE.addData(props.userId, {
@@ -25,10 +28,17 @@ const NewFormInput: React.FC<{
       data: JSON.parse(data.newFromDescription).data,
     });
     props.setUserData(INSTANCE.fetchUserData(props.userId));
+    reset();
+    setLastSubmitted(data.formLabel);
   };
 
   return (
     <Container>
+      {lastSubmitted && (
+        <p color="success" style={{ marginBottom: "1%", opacity: "0.5" }}>
+          {`Form '${lastSubmitted}' submitted successfully!`}
+        </p>
+      )}
       <form onSubmit={handleSubmit(onSubmit)}>
         <TextField {...register("formLabel")} label="Form Name" fullWidth />
         <TextField

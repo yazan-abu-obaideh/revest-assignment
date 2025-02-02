@@ -4,6 +4,13 @@
 
 This project is designed to allow users to render HTML forms from JSON data. A Github workflow is set up to ensure, on every push, that the code compiles and has no linting issues.
 
+## Features
+
+The app allows users to log in and log out using their user names. This data is kept in-memory and lost on restart.
+If a user name does not exist, it's created on the fly. Each user has their own data, which is a list of forms that they've submitted
+via the text field. Data submitted through a text field must be a valid JSON representing a form.
+The form then shows up for selection in the form selection component. Once a form is selected, it is rendered in the appropriate spot in the center of the page.
+
 ## Running locally
 
 To get started with this project, follow these steps:
@@ -29,13 +36,6 @@ To get started with this project, follow these steps:
    ```bash
    npm run dev
    ```
-
-## Features
-
-The app allows users to log in and log out using their user names. This data is kept in-memory and lost on restart.
-If a user name does not exist, it's created on the fly. Each user has their own data, which is a list of forms that they've submitted
-via the text field. Data submitted through a text field must be a valid JSON representing a form.
-The form then shows up for selection in the form selection component. Once a form is selected, it is rendered in the appropriate spot in the center of the page.
 
 ## Limitations
 

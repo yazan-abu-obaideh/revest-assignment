@@ -2,13 +2,22 @@
 import {
   Button,
   Container,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
   MenuItem,
+  Radio,
+  RadioGroup,
   Select,
   Stack,
   TextField,
 } from "@mui/material";
-import { useState } from "react";
-import { FieldValues, useForm, UseFormRegister } from "react-hook-form";
+import {
+  FieldErrors,
+  FieldValues,
+  useForm,
+  UseFormRegister,
+} from "react-hook-form";
 
 type ElementData = {
   id: number;
@@ -23,15 +32,34 @@ type ElementData = {
 
 function parseFormElement(
   elementData: ElementData,
-  register: UseFormRegister<FieldValues>
+  register: UseFormRegister<FieldValues>,
+  errors: FieldErrors<FieldValues>
 ) {
   switch (elementData.fieldType) {
     case "TEXT":
-      return <TextFormElement register={register} elementData={elementData} />;
+      return (
+        <TextFormElement
+          errors={errors}
+          register={register}
+          elementData={elementData}
+        />
+      );
     case "LIST":
-      return <ListFormElement register={register} elementData={elementData} />;
+      return (
+        <ListFormElement
+          errors={errors}
+          register={register}
+          elementData={elementData}
+        />
+      );
     case "RADIO":
-      return <RadioFormElement elementData={elementData} register={register} />;
+      return (
+        <RadioFormElement
+          errors={errors}
+          elementData={elementData}
+          register={register}
+        />
+      );
     default:
       return <>Unknown form element</>;
   }
@@ -40,90 +68,107 @@ function parseFormElement(
 const ListFormElement: React.FC<{
   elementData: ElementData;
   register: UseFormRegister<FieldValues>;
+  errors: FieldErrors<FieldValues>;
 }> = (props) => {
   const options = props.elementData.listOfValues1 || [];
-
   const fallBack = <> No options provided for list element </>;
 
   return options.length === 0 ? (
     fallBack
   ) : (
-    <>
-      <Select
-        {...props.register(props.elementData.name)}
-        label={props.elementData.name}
-        name={props.elementData.name}
-      >
-        {options.map((option) => {
-          return (
-            <MenuItem key={option} value={option}>
-              {option}
-            </MenuItem>
-          );
-        })}
-      </Select>
-    </>
+    <Select
+      {...props.register(props.elementData.name)}
+      label={props.elementData.name}
+      name={props.elementData.name}
+      defaultValue={
+        options[Number.parseInt(props.elementData.defaultValue) - 1]
+      }
+    >
+      {options.map((option) => {
+        return (
+          <MenuItem key={option} value={option}>
+            {option}
+          </MenuItem>
+        );
+      })}
+    </Select>
   );
 };
 
 const RadioFormElement: React.FC<{
   elementData: ElementData;
   register: UseFormRegister<FieldValues>;
+  errors: FieldErrors<FieldValues>;
 }> = (props) => {
-  const [selected, setSelected] = useState(props.elementData.defaultValue);
   const radioOptions = props.elementData.listOfValues1 ?? [];
   return (
-    <>
-      <label className="form-label" htmlFor={props.elementData.name}>
-        {props.elementData.name}
-      </label>
-      {radioOptions.map((option, index) => {
-        return (
-          <div key={option} className="form-check">
-            <input
-              {...props.register(props.elementData.name)}
-              onChange={() => {
-                const selected = index.toString();
-                setSelected(selected);
-              }}
-              className="form-check-input"
-              type="radio"
-              name={option}
-              id={option}
-              value={index}
-              checked={index.toString() === selected}
+    <FormControl required={props.elementData.required}>
+      <FormLabel> {props.elementData.name} </FormLabel>
+      <RadioGroup
+        name={props.elementData.name}
+        defaultValue={props.elementData.defaultValue}
+      >
+        {radioOptions.map((option, index) => {
+          const value = (index + 1).toString();
+          return (
+            <FormControlLabel
+              key={option}
+              value={value}
+              control={
+                <Radio
+                  {...props.register(props.elementData.name, {
+                    required: props.elementData.required,
+                  })}
+                />
+              }
+              label={option}
             />
-            <label className="form-check-label" htmlFor="customRadio1">
-              {option}
-            </label>
-          </div>
-        );
-      })}
-    </>
+          );
+        })}
+      </RadioGroup>
+    </FormControl>
   );
 };
 
 const TextFormElement: React.FC<{
   elementData: ElementData;
   register: UseFormRegister<FieldValues>;
+  errors: FieldErrors<FieldValues>;
 }> = (props) => {
+  const minLength = props.elementData.minLength ?? 0;
+  const maxLength = props.elementData.maxLength ?? 1000;
+  const data = props.elementData;
+  const name = data.name;
   return (
-    <>
-      <TextField
-        {...props.register(props.elementData.name)}
-        label={props.elementData.name}
-        className="form-control"
-        required={props.elementData.required}
-        name={props.elementData.name}
-        defaultValue={props.elementData.defaultValue}
-        type="text"
-      />
-    </>
+    <TextField
+      {...props.register(name, {
+        required: data.required,
+        minLength: {
+          value: minLength,
+          message: `'${name}' must have a length exceeding ${minLength}`,
+        },
+        maxLength: {
+          value: maxLength,
+          message: `'${name}' must have a length smaller than ${maxLength}`,
+        },
+      })}
+      label={name}
+      required={data.required}
+      name={name}
+      defaultValue={data.defaultValue}
+      error={props.errors[name] !== undefined}
+      helperText={props.errors[name]?.message?.toString()}
+      type="text"
+    />
   );
 };
 
 export const DynamicForm: React.FC<{ formDesc: string }> = (props) => {
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const parsed: { data: ElementData[] } = JSON.parse(props.formDesc);
 
   return (
@@ -136,7 +181,7 @@ export const DynamicForm: React.FC<{ formDesc: string }> = (props) => {
         <Stack spacing={2} width={400}>
           {parsed.data.map((elementData) => (
             <div key={elementData.id}>
-              {parseFormElement(elementData, register)}
+              {parseFormElement(elementData, register, errors)}
             </div>
           ))}
           <Button type="submit" variant="contained" color="primary">

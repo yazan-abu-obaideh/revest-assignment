@@ -6,18 +6,16 @@ import {
   AppBar,
   Box,
   Button,
-  Snackbar,
   Stack,
   TextField,
   Toolbar,
   Typography,
 } from "@mui/material";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 const INITIAL_INPUT = JSON.stringify(ASSIGNMENT_SAMPLE_DATA);
-const USER_ID = "USER_ID";
 
-const USER_MAP = new Map<string, string[]>();
+// const USER_MAP = new Map<string, string[]>();
 
 type SimpleLoginFieldValues = {
   UserId: string;
@@ -70,7 +68,7 @@ const SimpleLogin: React.FC<{ setUserId: (userId: string) => void }> = (
 };
 
 export default function Home() {
-  const [formDesc, setFormDesc] = useState(INITIAL_INPUT);
+  const [formDesc] = useState(INITIAL_INPUT);
   const [userId, setUserId] = useState<string | undefined>(undefined);
   return (
     <div>

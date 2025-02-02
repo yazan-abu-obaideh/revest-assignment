@@ -1,0 +1,48 @@
+{
+  "first": {
+    "data": [
+      {
+        "id": "abd8e26a-f481-416f-b461-74b6ea00409e",
+        "name": "Optional element < 10",
+        "fieldType": "TEXT",
+        "minLength": 1,
+        "maxLength": 10,
+        "defaultValue": "John",
+        "required": false
+      },
+      {
+        "id": "c3c3fd74-0c50-4323-8d96-4219ac7eacc6",
+        "name": "<3 Element <5",
+        "fieldType": "TEXT",
+        "minLength": 3,
+        "maxLength": 5,
+        "defaultValue": "John",
+        "required": true
+      }
+    ]
+  },
+
+  "second": {
+    "data": [
+      {
+        "id": "b87f5de1-8ec2-4c6d-a243-e68c4d17845d",
+        "name": "Optional element < 10",
+        "fieldType": "TEXT",
+        "minLength": 1,
+        "maxLength": 10,
+        "defaultValue": "John",
+        "required": false
+      },
+      {
+        "id": "a682fa08-a857-40f1-bf23-e21093262bf6",
+        "name": "<3 Element <5",
+        "fieldType": "TEXT",
+        "minLength": 3,
+        "maxLength": 5,
+        "defaultValue": "John",
+        "required": true
+      }
+    ]
+  
+  }
+}

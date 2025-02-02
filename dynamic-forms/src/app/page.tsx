@@ -20,6 +20,7 @@ export default function Home() {
 
   useEffect(() => {
     setUserData(INSTANCE.fetchUserData(userId ?? ""));
+    setFormDesc(ASSIGNMENT_SAMPLE_DATA);
   }, [userId]);
 
   const withSample = [ASSIGNMENT_SAMPLE_DATA, ...userData];

@@ -88,7 +88,7 @@ export default function Home() {
   const [userData, setUserData] = useState<FormDescription[]>([
     ASSIGNMENT_SAMPLE_DATA,
   ]);
-  const [showAddForm, setShowAddForm] = useState(true);
+  const [showAddForm] = useState(true);
 
   useEffect(() => {
     setUserData(INSTANCE.fetchUserData(userId ?? ""));

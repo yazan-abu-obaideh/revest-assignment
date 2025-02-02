@@ -18,7 +18,7 @@ import {
   useForm,
   UseFormRegister,
 } from "react-hook-form";
-import { ElementData, FormDescription } from "./FormData";
+import { ElementData, FormDescription } from "../FormData";
 
 function parseFormElement(
   elementData: ElementData,

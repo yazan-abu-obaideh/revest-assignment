@@ -79,7 +79,7 @@ const ListFormElement: React.FC<{
           options[Number.parseInt(props.elementData.defaultValue) - 1]
         }
       >
-        {["None", ...options].map((option, index) => {
+        {options.map((option, index) => {
           return (
             <MenuItem key={index} value={option}>
               {option}
@@ -154,11 +154,9 @@ const TextFormElement: React.FC<{
       defaultValue={data.defaultValue}
       error={props.errors[name] !== undefined}
       helperText={props.errors[name]?.message?.toString()}
-      sx={
-        {
-          width: "100%"
-        }
-      }
+      sx={{
+        width: "100%",
+      }}
       type="text"
     />
   );
@@ -172,14 +170,14 @@ export const DynamicForm: React.FC<{ formDesc: FormDescription }> = (props) => {
   } = useForm();
 
   return (
-    <Box sx={
-      {
+    <Box
+      sx={{
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "20%"
-      }
-    }>
+        height: "20%",
+      }}
+    >
       <form
         onSubmit={handleSubmit((data) => {
           console.log(data);
@@ -192,7 +190,7 @@ export const DynamicForm: React.FC<{ formDesc: FormDescription }> = (props) => {
             </div>
           ))}
           <Button type="submit" variant="contained" color="primary">
-            Submit
+            Highlight invalid fields
           </Button>
         </Stack>
       </form>
